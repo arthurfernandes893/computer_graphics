@@ -1,4 +1,7 @@
-#include <GL/glut.h>
+#define GL_SILENCE_DEPRECATION
+#include <GLUT/glut.h> //mac os
+//#include <GL/glut.h> //linux
+
 #include <math.h>
 
 
@@ -65,6 +68,15 @@ void display() {
     glScaled(2,3,1);
     triangle();
     
+    //janela
+    glLoadIdentity();
+    circle(1.2);
+
+
+    glLoadIdentity();
+    glTranslated(0,3,0);
+    circle(1.2);
+
     //asas
     glLoadIdentity();
 
@@ -89,9 +101,29 @@ void display() {
 
     glLoadIdentity();
 
-     glTranslated(1, -3.8, 0);
-     glScaled(0.6, 0.6, 1);
-     square();
+    glTranslated(1, -3.8, 0);
+    glScaled(0.6, 0.6, 1);
+    square();
+
+    //fumaca
+
+    glLoadIdentity();
+
+    glTranslated(1, -7, 0);
+    glScaled(0.3, 1.8, 1);
+    square();
+
+    glLoadIdentity();
+
+    glTranslated(0, -7, 0);
+    glScaled(0.3, 1.8, 1);
+    square();
+
+    glLoadIdentity();
+
+    glTranslated(-1, -7, 0);
+    glScaled(0.3, 1.8, 1);
+    square();
 
  
     
