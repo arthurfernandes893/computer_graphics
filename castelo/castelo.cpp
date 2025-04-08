@@ -42,6 +42,7 @@ void tower(char position){
   //position == 'l' ? glTranslated(-5,,0) : glTranslated(,,0);
 
   square();
+  towerRoof();
 }
 
 void towerRoof(/*Posicao do zero do TowerRoof*/){
@@ -61,6 +62,9 @@ void castle(int x, int y){
   
   glScaled(x,y,1);
   square();
+
+  castleDoor(x,y);
+  castleWindow(x,y);
   
 }
 
@@ -96,7 +100,7 @@ void display(){
     /*
     castle(x,y);
     towers(x, y);
-
+    sun();
      */
 
     glFlush();
@@ -125,4 +129,15 @@ int main(int argc, char** argv)
 
 }
 
-
+/**CALL STACK 
+ * display
+ * | castle
+ *   | castledoor
+ *   | castlewindow
+ * | towers
+ *   | tower
+ *     | towerroof
+ *   | tower
+ *     | towerroof
+ * | sun
+ */
