@@ -23,7 +23,7 @@ void init(void)
 
 void square()
 {
-	  glBegin(GL_LINE_LOOP);
+	  glBegin(GL_POLYGON);
 	    glVertex3f(-1, -1, 0);
 	    glVertex3f(1, -1, 0);
 	    glVertex3f(1, 1, 0);
@@ -32,7 +32,7 @@ void square()
 }
 
 void triangle() {
-	glBegin(GL_LINE_LOOP);
+	glBegin(GL_POLYGON);
 	  glVertex3f(-1, 0, 0);
 	  glVertex3f(0, 1, 0);
 	  glVertex3f(1, 0, 0);
@@ -40,7 +40,7 @@ void triangle() {
 }
 
 void circle(double radius){
-    glBegin(GL_LINE_LOOP);
+    glBegin(GL_POLYGON);
     for (int i = 0; i<32; i++){
         double angle = (2*PI/32)*i;
         glVertex3f(radius*cos(angle), radius*sin(angle), 0);
@@ -48,91 +48,70 @@ void circle(double radius){
     glEnd();
 }
 
+
+void drawCar(){
+    glColor3f(0, 0.7, 1);
+    
+    //rodas
+    double scale = 0.5;
+    struct translate{
+        double x = 1.0;
+        double y = 0.3;
+    } translate;
+    double roda = 1.0;
+    double midroda = 0.55;
+    double subroda = 0.3;
+    glPushMatrix();
+    glTranslated(-translate.x, translate.y, 0);
+    glScaled(scale, scale, 1);
+    circle(roda);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(translate.x, translate.y, 0);
+    glScaled(scale, scale, 1);
+    circle(roda);
+    glPopMatrix();
+
+    glColor3f(0, 0, 1);
+    glPushMatrix();
+    glTranslated(-translate.x, translate.y, 0);
+    glScaled(scale, scale, 1);
+    circle(midroda*roda);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(translate.x, translate.y, 0);
+    glScaled(scale, scale, 1);
+    circle(midroda*roda);
+    glPopMatrix();
+    
+
+    glColor3f(1, 0, 0);
+    //carroceria
+    glPushMatrix();
+    glTranslated(0, 0.7, 0);
+    glScaled(1.8, 0.4, 1);
+    square();
+    glPopMatrix();
+
+    //capo
+    glPushMatrix();
+    glTranslated(-0.5, 1.25, 0);
+    glScaled(1.2, 0.4, 1);
+    square();
+    glPopMatrix();
+}
 void display() {
 
-  // Limpa a janela, colocando na tela a cor definida pela função glClearColor
-  glClear(GL_COLOR_BUFFER_BIT);
+    // Limpa a janela, colocando na tela a cor definida pela função glClearColor
+    glClear(GL_COLOR_BUFFER_BIT);
 
-  glMatrixMode (GL_MODELVIEW);
-  glLoadIdentity();
-
-    glColor3f(0, 0, 0);
-    
-    //base
-    glScaled(2,5,1);
-    square();
-
-    //ponta
+    glMatrixMode (GL_MODELVIEW);
     glLoadIdentity();
-    glTranslated(0, 5, 0);
-    glScaled(2,3,1);
-    triangle();
-    
-    //janela
-    glLoadIdentity();
-    circle(1.2);
-
-
-    glLoadIdentity();
-    glTranslated(0,3,0);
-    circle(1.2);
-
-    //asas
-    glLoadIdentity();
-
-    
-    glTranslated(-2, -3.8, 0);
-    glRotated(90,0,0,1);
-    glScaled(1.2,2,1);
-    triangle();
-
-    glLoadIdentity();
-    glTranslated(2, -3.8, 0);
-    glRotated(270,0,0,1);
-    glScaled(1.2,2,1);
-    triangle();
-
-    //motores
-    glLoadIdentity();
-
-    glTranslated(-1, -3.8, 0);
-    glScaled(0.6, 0.6, 1);
-    square();
-
-    glLoadIdentity();
-
-    glTranslated(1, -3.8, 0);
-    glScaled(0.6, 0.6, 1);
-    square();
-
-    //fumaca
-
-    glLoadIdentity();
-
-    glTranslated(1, -7, 0);
-    glScaled(0.3, 1.8, 1);
-    square();
-
-    glLoadIdentity();
-
-    glTranslated(0, -7, 0);
-    glScaled(0.3, 1.8, 1);
-    square();
-
-    glLoadIdentity();
-
-    glTranslated(-1, -7, 0);
-    glScaled(0.3, 1.8, 1);
-    square();
-
- 
-    
-
-    
-
-
- // Libera o buffer de comando de desenho para fazer o desenho acontecer o mais rápido possível.
-  glFlush();
+    drawCar();
+    // Libera o buffer de comando de desenho para fazer o desenho acontecer o mais rápido possível.
+    glFlush();
 }
 
 
