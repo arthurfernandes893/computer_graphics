@@ -11,6 +11,14 @@ void display(void);
 float PI = 3.14;
 int window_size = 1000;
 
+int frameNumber = 0;
+double posicao_carro = 0;
+double posicao_carro_dir = 0;
+double posicao_carro_esq = 0;
+double previous_posicao_carro = 0;
+/*Parear com o translate do objeto usando a função keyboard, para movimentar em um dx*/
+/*se a divisao do frame for tal, desenhar objeto*/
+
 struct mounts_coords{
     double m1_x = -window_size/100 + 4;
     double m2_x = -window_size/100 +10;
@@ -36,6 +44,7 @@ void init(void)
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity();
   glOrtho (-10, 10, -10, 10, -10, 10);
+  glMatrixMode(GL_MODELVIEW);
 }
 
 void square()
@@ -69,6 +78,9 @@ void circle(double radius){
 void sun(){
     int i;
     glColor3f(1,1,0);
+    
+    glPushMatrix();
+    glRotated(-frameNumber*0.7,0,0,1);
     for(int i = 0; i < 13; i++){
         glRotatef(360/13, 0, 0, 1);
         glBegin(GL_LINES);
@@ -76,6 +88,7 @@ void sun(){
         glVertex2f(0.75f,0);
         glEnd();
     }
+    glPopMatrix();
     circle(0.5);
     glColor3f(0,0,0);
 }
@@ -127,25 +140,20 @@ void windMill(){
     glScaled(0.05, 1.5, 1);
     square();
     glPopMatrix();
-
+    
+	
     //wings
     glColor3f(1, 0.5, 0.5);
     glPushMatrix();
     glTranslated(0, 3, 0);
-        glPushMatrix();
-        glRotated(90, 0, 0, 1);
+	glRotated(frameNumber * (180.0/46), 0, 0, 1);
+	glColor3f(0.4f, 0.4f, 0.8f);
+	for (int i = 0; i < 3; i++) {
+		glPushMatrix();
+        glRotated(120*i, 0, 0, 1);
         windMillWing();
         glPopMatrix();
-
-        glPushMatrix();
-        glRotated(210, 0, 0, 1);
-        windMillWing();
-        glPopMatrix();
-
-        glPushMatrix();
-        glRotated(330, 0, 0, 1);
-        windMillWing();
-        glPopMatrix();
+	}
     glPopMatrix();
 }
 
@@ -201,6 +209,17 @@ void wheel(){
     glScaled(0.4, 0.4, 1);
     circle(1.0);
     glPopMatrix();
+    
+    //animation
+    if(previous_posicao_carro == posicao_carro){
+        glRotatef(-frameNumber*0,0,0,1);
+    }
+    if(posicao_carro > 0 ){
+        glRotatef(-frameNumber*5,0,0,1);
+    }else if(posicao_carro < -1){
+        glRotatef(frameNumber*5,0,0,1);
+    }
+	
 
     glColor3f(0, 0, 0);
     glPushMatrix();
@@ -263,15 +282,53 @@ void display() {
     mounts();
     drawWindMills();
     drawStreet();
-    drawSun();
-    drawCar();
     
+    glPushMatrix();
+    //glRotated(-frameNumber*0.7,0,0,1);
+    drawSun();
+    glPopMatrix();
+    
+    glPushMatrix();
+    //glTranslated(-3 + 13*(frameNumber % 300) / 300.0, 0, 0);
+    
+    glTranslated(posicao_carro, 0, 0);
+    drawCar();
+    glPopMatrix();
 
+    previous_posicao_carro = posicao_carro;
+	
+    glutSwapBuffers();
+    
     // Libera o buffer de comando de desenho para fazer o desenho acontecer o mais rápido possível.
-    glFlush();
+    //glFlush();
 }
 
+void doFrame(int v) {
+    frameNumber++;
+    glutPostRedisplay();
+    glutTimerFunc(30,doFrame,0);
+}
 
+void keyboard(unsigned char key, int x, int y)
+{
+    double dx = 0.5; // Step size for car movement
+
+    if(posicao_carro == window_size/100){
+        posicao_carro = -window_size/100;
+    }else if(posicao_carro < -window_size/100){
+        posicao_carro = -window_size/100;
+    }else{
+        switch (key) {
+            case 'a': case 'A': // Move backward
+                posicao_carro -= dx;
+                break;
+            case 'd': case 'D': // Move forward
+                posicao_carro += dx;
+                break;
+        }
+    }
+    display(); // Request a redraw
+}
 
 int main(int argc, char** argv)
 {
@@ -283,8 +340,12 @@ int main(int argc, char** argv)
   //Informa à biblioteca GLUT o modo do display a ser utilizado quando a janela gráfica for criada.
   // O flag GLUT_SINGLE força o uso de uma janela com buffer simples, significando que todos os desenhos serão feitos diretamente nesta janela.
   // O flag GLUT_RGB determina que o modelo de cor utilizado será o modelo RGB.
-  glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
+  //glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
 
+
+   glutInitDisplayMode(GLUT_DOUBLE);
+   
+   
   //Define o tamanho inicial da janela, 256x256 pixels, e a posição inicial do seu canto superior esquerdo na tela, (x, y)=(100, 100).
   glutInitWindowSize (window_size, window_size);
   glutInitWindowPosition (200, 200);
@@ -298,6 +359,11 @@ int main(int argc, char** argv)
   // Define display() como a função de desenho (display callback) para a janela corrente.
   // Quando GLUT determina que esta janela deve ser redesenhada, a função de desenho é chamada.
   glutDisplayFunc(display);
+  
+  glutKeyboardFunc(keyboard);
+
+  glutTimerFunc(200,doFrame,0); 
+
 
   //Inicia o loop de processamento de desenhos com GLUT.
   // Esta rotina deve ser chamada pelo menos uma vez em um programa que utilize a biblioteca GLUT.
@@ -306,3 +372,4 @@ int main(int argc, char** argv)
   return 0;
 
 }
+
