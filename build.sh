@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Nome do programa (sem extensão)
-nome="carro"
+nome="paisagem"
 
 # Verifica o sistema operacional
 os_name=$(uname)
