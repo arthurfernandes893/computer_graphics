@@ -3,7 +3,9 @@
 //#include <GL/glut.h> //linux
 
 #include <math.h>
+#include <iostream>
 
+using namespace std;
 
 void init(void);
 void display(void);
@@ -16,6 +18,7 @@ double posicao_carro = 0;
 double posicao_carro_dir = 0;
 double posicao_carro_esq = 0;
 double previous_posicao_carro = 0;
+bool keep = true;
 /*Parear com o translate do objeto usando a função keyboard, para movimentar em um dx*/
 /*se a divisao do frame for tal, desenhar objeto*/
 
@@ -297,6 +300,19 @@ void display() {
 
     previous_posicao_carro = posicao_carro;
 	
+    
+
+    if(frameNumber%100 == 0){
+        keep = true;
+        glPushMatrix();
+        glTranslated(4,-window_size/100, 0);
+        circle(1.0);
+        glPopMatrix();
+        cout << "Drawing circle at frame: framenumber : " << frameNumber << endl;
+    }
+
+    
+
     glutSwapBuffers();
     
     // Libera o buffer de comando de desenho para fazer o desenho acontecer o mais rápido possível.
