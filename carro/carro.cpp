@@ -1,8 +1,8 @@
-#define GL_SILENCE_DEPRECATION
-#include <GLUT/glut.h> //mac os
-//#include <GL/glut.h> //linux
-
-#include <math.h>
+#ifdef __APPLE_CC__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
 
 
 void init(void);
