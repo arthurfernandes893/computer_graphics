@@ -12,12 +12,12 @@ void display(void);
 
 float PI = 3.14;
 int window_size = 1000;
-
+bool front = true;
 int frameNumber = 0;
-double posicao_carro = 0;
-double posicao_carro_dir = 0;
-double posicao_carro_esq = 0;
-double previous_posicao_carro = 0;
+double posicao_penguim = 0;
+double posicao_penguim_dir = 0;
+double posicao_penguim_esq = 0;
+double previous_posicao_penguim = 0;
 bool keep = true;
 /*Parear com o translate do objeto usando a função keyboard, para movimentar em um dx*/
 /*se a divisao do frame for tal, desenhar objeto*/
@@ -167,69 +167,82 @@ void drawPenguim() {
     glPushMatrix();
         glTranslated(-3, -window_size/130 + 3, 0);
         glPushMatrix();
-            // Corpo (óvalo preto)
             glPushMatrix();
-                glColor3f(0.05f, 0.05f, 0.05f);      // preto
-                glScaled(0.5f, 1.0f, 1.0f);          // torna o círculo em oval vertical
+                glColor3f(0.05f, 0.05f, 0.05f);
+                glScaled(0.5f, 1.0f, 1.0f);
                 circle(1.0);
             glPopMatrix();
 
-            // Barriga (óvalo branco, levemente menor que o corpo)
             glPushMatrix();
-                glColor3f(1.00f, 1.00f, 1.00f);      // branco
+                glColor3f(1.00f, 1.00f, 1.00f);
                 glScaled(0.3f, 0.6f, 1.0f);
-                glTranslated(0.0, 1.0f, 0.0);        // sobe para ficar centralizado na parte frontal do corpo
+                glTranslated(0.0, 1.0f, 0.0);
                 circle(1.0);
             glPopMatrix();
 
-            // Pés (dois triângulos vermelhos invertidos)
-            glColor3f(0.65f, 0.10f, 0.10f);          // vermelho escuro
-            // Pé esquerdo
+            glColor3f(0.65f, 0.10f, 0.10f);
             glPushMatrix();
-                glTranslated(-0.3f, -1.0f, 0.0f);   // posiciona à esquerda e abaixo do corpo
-                glScaled(0.3f, 0.3f, 1.0f);         
-                glRotated(180.0, 0.0, 0.0, 1.0);    // inverte o triângulo para apontar para baixo
+                glTranslated(-0.3f, -1.0f, 0.0f);
+                glScaled(0.3f, 0.3f, 1.0f);
+                glRotated(180.0, 0.0, 0.0, 1.0);
                 triangle();
             glPopMatrix();
-            // Pé direito
             glPushMatrix();
-                glTranslated( 0.3f, -1.0f, 0.0f);
+                glTranslated(0.3f, -1.0f, 0.0f);
                 glScaled(0.3f, 0.3f, 1.0f);
                 glRotated(180.0, 0.0, 0.0, 1.0);
                 triangle();
             glPopMatrix();
 
-            // Cabeça (círculo verde neon)
             glPushMatrix();
-                glColor3f(0.05f, 0.05f, 0.05f);     
+                glColor3f(0.05f, 0.05f, 0.05f);
                 glScaled(0.35f, 0.35f, 1.0f);
-                glTranslated(0.0, 3.3f, 0.0);        // sobe acima do corpo
+                glTranslated(0.0, 3.3f, 0.0);
                 circle(1.0);
             glPopMatrix();
 
-            // Olho (círculo branco pequeno)
-            glPushMatrix();
-                glColor3f(1.00f, 1.00f, 1.00f);      // branco
-                glScaled(0.08f, 0.08f, 1.0f);
-                // desloca relativamente ao sistema da cabeça:
-                // fator de escala combinado -> 0.3 (da cabeça) * 1 (do eyeball) = 0.3
-                // para mover  e.g. +0.6 no sistema final → +0.6/0.3 = +2.0 no push local
-                glTranslated(2.0f, 0.9f + 3.4f/0.3f, 0.0f); 
-                circle(1.0);
-            glPopMatrix();
+            if (!front) {
+                glPushMatrix();
+                glRotated(180, 0, 0, 1);
+                    glPushMatrix();
+                        glColor3f(1.00f, 1.00f, 1.00f);
+                        glScaled(0.08f, 0.08f, 1.0f);
+                        glTranslated(-2.0f, 0.9f + 3.4f / 0.3f, 0.0f);
+                        circle(1.0);
+                    glPopMatrix();
 
-            // Bico (triângulo amarelo apontando para a direita)
-            glPushMatrix();
-                glColor3f(1.00f, 0.65f, 0.00f);      // laranja
-                glTranslated(0.35f, 1.1f, 0.0f);     // corrigido: mais próximo da cabeça
-                glScaled(0.2f, 0.2f, 1.0f);
-                glRotated(-90.0, 0.0, 0.0, 1.0);     // gira para apontar à direita
-                triangle();
-            glPopMatrix();
+                    glPushMatrix();
+                        glColor3f(1.00f, 0.65f, 0.00f);
+                        glTranslated(-0.35f, 1.1f, 0.0f);
+                        glScaled(0.2f, 0.2f, 1.0f);
+                        triangle();
+                    glPopMatrix();
+                glPopMatrix();
+            } else {
+                glPushMatrix();
+                    glColor3f(1.00f, 1.00f, 1.00f);
+                    glScaled(0.08f, 0.08f, 1.0f);
+                    glTranslated(2.0f, 0.9f + 3.4f / 0.3f, 0.0f);
+                    circle(1.0);
+                glPopMatrix();
+
+                glPushMatrix();
+                    glColor3f(1.00f, 0.65f, 0.00f);
+                    glTranslated(0.35f, 1.1f, 0.0f);
+                    glScaled(0.2f, 0.2f, 1.0f);
+                    triangle();
+                glPopMatrix();
+            }
         glPopMatrix();
-
     glPopMatrix();
-    
+}
+
+void movePenguim(){
+    //movement
+    glPushMatrix();   
+        glTranslated(posicao_penguim, 0, 0);     
+        drawPenguim();
+    glPopMatrix();
 }
 void windMillWing(){
     glBegin(GL_POLYGON);
@@ -312,12 +325,12 @@ void wheel(){
     glPopMatrix();
     
     //animation
-    if(previous_posicao_carro == posicao_carro){
+    if(previous_posicao_penguim == posicao_penguim){
         glRotatef(-frameNumber*0,0,0,1);
     }
-    if(posicao_carro > 0 ){
+    if(posicao_penguim > 0 ){
         glRotatef(-frameNumber*5,0,0,1);
-    }else if(posicao_carro < -1){
+    }else if(posicao_penguim < -1){
         glRotatef(frameNumber*5,0,0,1);
     }
 	
@@ -395,8 +408,8 @@ void display() {
 
     drawScenario();
 
-    drawPenguim();
-
+    //drawPenguim();
+    movePenguim();
     /*
     drawWindMills();
     drawStreet();
@@ -409,11 +422,11 @@ void display() {
     glPushMatrix();
     //glTranslated(-3 + 13*(frameNumber % 300) / 300.0, 0, 0);
     
-    glTranslated(posicao_carro, 0, 0);
+    glTranslated(posicao_penguim, 0, 0);
     drawCar();
     glPopMatrix();
 
-    previous_posicao_carro = posicao_carro;
+    previous_posicao_penguim = posicao_penguim;
 	
     
 
@@ -444,17 +457,19 @@ void keyboard(unsigned char key, int x, int y)
 {
     double dx = 0.5; // Step size for car movement
 
-    if(posicao_carro == window_size/100){
-        posicao_carro = -window_size/100;
-    }else if(posicao_carro < -window_size/100){
-        posicao_carro = -window_size/100;
+    if(posicao_penguim == window_size/100){
+        posicao_penguim = -window_size/100;
+    }else if(posicao_penguim < -window_size/100){
+        posicao_penguim = -window_size/100;
     }else{
         switch (key) {
             case 'a': case 'A': // Move backward
-                posicao_carro -= dx;
+                front = false;
+                posicao_penguim -= dx;
                 break;
             case 'd': case 'D': // Move forward
-                posicao_carro += dx;
+                front = true;
+                posicao_penguim += dx;
                 break;
         }
     }
