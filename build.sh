@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Nome do programa (sem extensão)
-nome="pinguim"
+nome="$fname"
 
 # Verifica o sistema operacional
 os_name=$(uname)
@@ -20,5 +20,5 @@ else
 fi
 
 chmod +x "$nome/$nome.vis"
-echo "Running..."
+echo "Running $nome/$nome.vis ..."
 ./"$nome/$nome.vis"
