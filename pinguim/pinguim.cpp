@@ -3,6 +3,7 @@
 #else
 #include <GL/glut.h>
 #endif
+
 #include <iostream>
 
 using namespace std;
@@ -203,18 +204,18 @@ void drawPenguim() {
 
             if (!front) {
                 glPushMatrix();
-                glRotated(180, 0, 0, 1);
                     glPushMatrix();
                         glColor3f(1.00f, 1.00f, 1.00f);
                         glScaled(0.08f, 0.08f, 1.0f);
-                        glTranslated(-2.0f, 0.9f + 3.4f / 0.3f, 0.0f);
+                        glTranslated(-1.0f, 1.0f + 3.4f / 0.3f, 0.0f);
+                       
                         circle(1.0);
                     glPopMatrix();
 
                     glPushMatrix();
                         glColor3f(1.00f, 0.65f, 0.00f);
                         glTranslated(-0.35f, 1.1f, 0.0f);
-                        glScaled(0.2f, 0.2f, 1.0f);
+                        glScaled(-0.2f, 0.2f, 1.0f);
                         triangle();
                     glPopMatrix();
                 glPopMatrix();
@@ -222,7 +223,7 @@ void drawPenguim() {
                 glPushMatrix();
                     glColor3f(1.00f, 1.00f, 1.00f);
                     glScaled(0.08f, 0.08f, 1.0f);
-                    glTranslated(2.0f, 0.9f + 3.4f / 0.3f, 0.0f);
+                    glTranslated(1.0f, 1.0f + 3.4f / 0.3f, 0.0f);
                     circle(1.0);
                 glPopMatrix();
 
@@ -244,141 +245,56 @@ void movePenguim(){
         drawPenguim();
     glPopMatrix();
 }
-void windMillWing(){
-    glBegin(GL_POLYGON);
-    glVertex3f(0,0,0);
-    glVertex3f(0.5, -0.1, 0);
-    glVertex3f(1.5, 0, 0);
-    glVertex3f(0.5, 0.1, 0);
-    glEnd();
-};
 
-void windMill(){
-    glColor3f(1, 1, 1);
+void drawBaby(){
     glPushMatrix();
-    glTranslated(0, 1.5, 0);
-    glScaled(0.05, 1.5, 1);
-    square();
+        
+        glTranslated(-window_size/260 - 3, -window_size/260 + 3, 0);
+        glScaled(0.8,0.8,1);
+        drawPenguim();
     glPopMatrix();
-    
-	
-    //wings
-    glColor3f(1, 0.5, 0.5);
-    glPushMatrix();
-    glTranslated(0, 3, 0);
-	glRotated(frameNumber * (180.0/46), 0, 0, 1);
-	glColor3f(0.4f, 0.4f, 0.8f);
-	for (int i = 0; i < 3; i++) {
-		glPushMatrix();
-        glRotated(120*i, 0, 0, 1);
-        windMillWing();
-        glPopMatrix();
-	}
-    glPopMatrix();
+
 }
-void drawWindMills(){
-    glPushMatrix();
-    glTranslated(0, 1.3, 0);
-    glScaled(1.2,1.2,1);
-    windMill();
-    glPopMatrix();
 
-    glPushMatrix();
-    glTranslated(mounts_coords.m1_x,0,0);
-    glScaled(0.8, 0.8, 1);
-    windMill();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslated(mounts_coords.m3_x, mounts_coords.y + 6,0);
-    glScaled(0.7, 0.7, 1);
-    windMill();
-    glPopMatrix();
-};
-void drawStreet(){
-    glColor3f(0.64, 0.64, 0.64);
-    glPushMatrix();
-    glTranslated(0, -window_size/130, 0);
-    glScaled((window_size/100)+5, 1.4, 1);
-    square();
-    glPopMatrix();
-
-    glColor3f(1, 1, 1);
-    glPushMatrix();
-    glTranslated(0, -window_size/130, 0);
-    glScaled((window_size/100)+5, 0.175, 1);
-    square();
-    glPopMatrix();
-    
+void drawFishBody(double radiusX, double radiusY)
+{
+  glBegin(GL_POLYGON);
+  for (int i = 0; i < 32; i++){
+    double ellipse_angle = (2 * M_PI / 32) * i;
+    glVertex3f(radiusX * cos(ellipse_angle), radiusY * sin(ellipse_angle), 0);
+  }
+  glEnd();
 }
-void wheel(){
-    glColor3f(0.8, 0.8, 0.8);
-    glPushMatrix();
-    glScaled(0.95, 0.95, 1);
-    circle(1.0);
-    glPopMatrix();
 
+void drawElipse(double radiusX, double radiusY)
+{
+  glBegin(GL_POLYGON);
+  for (int i = 0; i < 32; i++){
+    double ellipse_angle = (2 * M_PI / 32) * i;
+    glVertex3f(radiusX * cos(ellipse_angle), radiusY * sin(ellipse_angle), 0);
+  }
+  glEnd();
+}
+
+
+void drawFish() {
+
+  // desenha rabo
+  glPushMatrix();
     glColor3f(0, 0, 0);
-    glPushMatrix();
-    glScaled(0.4, 0.4, 1);
-    circle(1.0);
-    glPopMatrix();
-    
-    //animation
-    if(previous_posicao_penguim == posicao_penguim){
-        glRotatef(-frameNumber*0,0,0,1);
-    }
-    if(posicao_penguim > 0 ){
-        glRotatef(-frameNumber*5,0,0,1);
-    }else if(posicao_penguim < -1){
-        glRotatef(frameNumber*5,0,0,1);
-    }
-	
+    glTranslatef(-2, 0, 1);
+    glScalef(1, 0.5, 1);
+    glRotatef(270, 0, 0, 1);
+    triangle();
+  glPopMatrix();
 
+  // desenha corpo
+  glPushMatrix();
     glColor3f(0, 0, 0);
-    glPushMatrix();
-    glBegin(GL_LINES);
-        for(int i =0; i < 12; i++){
-            float angle = ((2*PI)/12)*i;
-            glVertex3f(0,0,0);
-            glVertex3f(cos(angle), sin(angle), 0);
-        }
-    glEnd();
-    glPopMatrix();
-}
-void car(){
-    glPushMatrix();
-    glTranslatef(-1.5f, -0.1f, 0);
-    glScalef(0.8f, 0.8f, 1);
-    wheel();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(1.5f, -0.1f, 0);
-    glScalef(0.8f, 0.8f, 1);
-    wheel();
-    glPopMatrix();
-
-    glColor3f(1,0,0);
-    glPushMatrix();
-    glTranslatef(0, 0.7f, 0);
-    glScalef(3, 0.8f, 1);
-    square();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(-0.5, 2.0, 0);
-    glScalef(1.5, 0.8, 1);
-    square();
-    glPopMatrix();
-
-    
-}
-void drawCar(){
-    glPushMatrix();
-    glTranslated(0, -window_size/150, 0);
-    car();
-    glPopMatrix();
+    glScalef(1, 1, 1);
+    glTranslatef(0, 0, 0);
+    drawFishBody(1, 0.5);
+  glPopMatrix();
 }
 
 void drawScenario(){
@@ -390,9 +306,27 @@ void drawScenario(){
     drawIceSheet();
 }
 
+void drawFishModel() {
+  glPushMatrix();
+    glColor3f(0.8f, 0.4f, 0.0f);
+    glTranslatef(-1.5f * 0.5f, 0, 0.5f);
+    glRotatef(270, 0, 0, 1);
+    glScalef(1.0f * 0.5f, 0.5f * 0.5f, 1);
+    triangle();
+  glPopMatrix();
+
+  glPushMatrix();
+    glColor3f(0.8f, 0.4f, 0.0f);
+    glTranslatef(0, 0, 0.5f);
+    glScalef(1.0f * 0.5f, 1.0f * 0.5f, 1);
+    drawElipse(1, 0.5);
+  glPopMatrix();
+}
+
+
 /*TODO
-1. Movimento do penguim na horizontal- usar carro
-2. Filhote do Penguim
+1. OK - Movimento do penguim na horizontal- usar carro
+2. OK - Filhote do Penguim
 3. Peixe
 4. Passaro
 5. Dar movimento aleaorio pros peixes
@@ -407,44 +341,15 @@ void display() {
     glLoadIdentity();
 
     drawScenario();
-
-    //drawPenguim();
+    drawBaby();
+    drawFishModel();
     movePenguim();
-    /*
-    drawWindMills();
-    drawStreet();
-    
-    glPushMatrix();
-    //glRotated(-frameNumber*0.7,0,0,1);
-    drawSun();
-    glPopMatrix();
-    
-    glPushMatrix();
-    //glTranslated(-3 + 13*(frameNumber % 300) / 300.0, 0, 0);
-    
-    glTranslated(posicao_penguim, 0, 0);
-    drawCar();
-    glPopMatrix();
 
-    previous_posicao_penguim = posicao_penguim;
-	
-    
-
-    if(frameNumber%100 == 0){
-        keep = true;
-        glPushMatrix();
-        glTranslated(4,-window_size/100, 0);
-        circle(1.0);
-        glPopMatrix();
-        cout << "Drawing circle at frame: framenumber : " << frameNumber << endl;
-    }
-
-    */
 
     glutSwapBuffers();
     
     // Libera o buffer de comando de desenho para fazer o desenho acontecer o mais rápido possível.
-    //glFlush();
+    glFlush();
 }
 
 void doFrame(int v) {
