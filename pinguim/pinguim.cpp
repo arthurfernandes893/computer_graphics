@@ -6,12 +6,20 @@
 #endif
 
 #include <iostream>
+#include <math.h>
+#include <string>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
 
 using namespace std;
 
 void init(void);
 void display(void);
 
+/*=================UTILS===============*/
 float PI = 3.14;
 int max_height = 1000;
 bool front = true;
@@ -27,6 +35,8 @@ double BIRD_MOVEMENT;
 double SEA_MAX_RIGHT = max_height/100;
 double SEA_MAX_LEFT = SEA_MAX_RIGHT - 4;
 
+double gameTimeRemaining = 5*60;
+double sessionTimeRemainingForWin = 0;
 bool keep = true;
 
 struct mounts_coords{
@@ -36,8 +46,24 @@ struct mounts_coords{
     double y = -max_height/130;
 } mounts_coords;
 
+std::string formatTime(int totalSeconds) {
+    int minutes = totalSeconds / 60;
+    int seconds = totalSeconds % 60;
+    char buffer[6];
+    return std::string(buffer);
+}
 
+void updateGameTime() {
+    static int lastFrame = 0;
 
+    // Check if a second has passed based on frame count
+    if (frameNumber - lastFrame >= 30) { // Assuming 30 FPS
+        if (gameTimeRemaining > 0) {
+            gameTimeRemaining--; // Decrease game time by 1 second
+        }
+        lastFrame = frameNumber; // Update the last frame count
+    }
+}
 /*===================PRIMITVAS=================== 
 Utilizadas para facilitar a construcao de estruturas mais complexas
 */
@@ -442,6 +468,14 @@ void display() {
     movePenguim();
 
     moveBird();
+
+
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glRasterPos2f(-max_height/100 + 1.0f, max_height/100 - 2.0f);
+    std::string pinguinLifeStr = "TEMPO DE JOGO: " + formatTime(gameTimeRemaining);
+    for (char c : pinguinLifeStr) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, c);
+    }
 
     glutSwapBuffers();
     
