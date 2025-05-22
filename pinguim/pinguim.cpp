@@ -21,6 +21,9 @@ double posicao_penguim_dir = 0;
 double posicao_penguim_esq = 0;
 double previous_posicao_penguim = 0;
 
+double BIRD_INIT_VERTICAL = max_height/100 -3;
+double BIRD_INIT_HORIZONTAL = -4;
+double BIRD_MOVEMENT;
 double SEA_MAX_RIGHT = max_height/100;
 double SEA_MAX_LEFT = SEA_MAX_RIGHT - 4;
 
@@ -128,6 +131,12 @@ void drawSea(){
     glPopMatrix();
 }
 
+void drawScenario(){
+    icebergs();
+    drawSea();
+    drawIceSheet();
+}
+
 
 /*PERSONAGENS
 Definicao das funcoes que desenham os personagens*/
@@ -228,26 +237,6 @@ void drawBaby(){
 }
 
 
-/*PEIXES
-Implementacao da lógica por tras dos peixes no mar*/
-void drawFishBody(double radiusX, double radiusY)
-{
-  glBegin(GL_POLYGON);
-  for (int i = 0; i < 32; i++){
-    double ellipse_angle = (2 * M_PI / 32) * i;
-    glVertex3f(radiusX * cos(ellipse_angle), radiusY * sin(ellipse_angle), 0);
-  }
-  glEnd();
-}
-
-
-void drawScenario(){
-    icebergs();
-    drawSea();
-    drawIceSheet();
-}
-
-
 /*FISH SECTION*/
 
 const float SEA_LEFT   = 2.0f;
@@ -258,7 +247,6 @@ const float SEA_TOP    =   -4.5f;
 // Número de peixes
 const int   NUM_FISHES = 6;
 
-// Estrutura de um peixe
 struct Fish {
     float x, y;          
     float speed;         
@@ -285,6 +273,16 @@ void initializeFishes() {
         f.isRight = (rand() % 2 == 0); //probabilidade de 50% de ser criado pra direita ou esquerda
         fishes.push_back(f);
     }
+}
+
+void drawFishBody(double radiusX, double radiusY)
+{
+  glBegin(GL_POLYGON);
+  for (int i = 0; i < 32; i++){
+    double ellipse_angle = (2 * M_PI / 32) * i;
+    glVertex3f(radiusX * cos(ellipse_angle), radiusY * sin(ellipse_angle), 0);
+  }
+  glEnd();
 }
 
 // Atualiza posição de cada peixe, invertendo direção ao bater na borda
@@ -340,6 +338,41 @@ void drawFishes() {
     }
 }
 
+
+/*PASSARO
+Implementação do pássaro*/
+
+void drawBird(){
+    glPushMatrix();
+        glColor3f(0.9f, 0.50f, 0.70f);
+        glTranslated(BIRD_INIT_HORIZONTAL,BIRD_INIT_VERTICAL,0);
+        glPushMatrix();
+            glTranslated(-0.75, 0.75, 0);
+            glRotated(315, 0, 0, 1);
+            glScaled(1, 0.1, 1);
+            square();
+        glPopMatrix();
+
+        glPushMatrix();
+            glTranslated(0.75, 0.75, 0);
+            glRotated(45, 0, 0, 1);
+            glScaled(1, 0.1, 1);
+            square();
+        glPopMatrix();
+    glPopMatrix();
+   
+}
+
+void moveBird(){
+    double x,y;
+    glPushMatrix();
+        x = BIRD_MOVEMENT;
+        y = ((x/2 - 4)*(x/2 - 4));
+        glTranslated(-x,-y,0);
+        drawBird();
+    glPopMatrix();
+}
+
 /*TODO
 1. OK - Movimento do penguim na horizontal- usar carro
 2. OK - Filhote do Penguim
@@ -376,6 +409,7 @@ void display() {
     drawFishes();
     movePenguim();
 
+    moveBird();
 
     glutSwapBuffers();
     
@@ -385,7 +419,8 @@ void display() {
 
 void doFrame(int v) {
     frameNumber++;
-     updateFishes();
+    BIRD_MOVEMENT++;
+    updateFishes();
     glutPostRedisplay();
     glutTimerFunc(30,doFrame,0);
 }
