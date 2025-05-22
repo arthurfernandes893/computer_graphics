@@ -1,3 +1,4 @@
+#define GL_SILENCE_DEPRECATION
 #ifdef __APPLE_CC__
 #include <GLUT/glut.h>
 #else
@@ -12,45 +13,31 @@ void init(void);
 void display(void);
 
 float PI = 3.14;
-int window_size = 1000;
+int max_height = 1000;
 bool front = true;
 int frameNumber = 0;
 double posicao_penguim = 0;
 double posicao_penguim_dir = 0;
 double posicao_penguim_esq = 0;
 double previous_posicao_penguim = 0;
+
+double SEA_MAX_RIGHT = max_height/100;
+double SEA_MAX_LEFT = SEA_MAX_RIGHT - 4;
+
 bool keep = true;
-/*Parear com o translate do objeto usando a função keyboard, para movimentar em um dx*/
-/*se a divisao do frame for tal, desenhar objeto*/
 
 struct mounts_coords{
-    double m1_x = -window_size/100 + 4;
-    double m2_x = -window_size/100 +10;
-    double m3_x = -window_size/100 +17.5;
-    double y = -window_size/130;
+    double m1_x = -max_height/100 + 4;
+    double m2_x = -max_height/100 +10;
+    double m3_x = -max_height/100 +17.5;
+    double y = -max_height/130;
 } mounts_coords;
 
-struct windMill_coords{
-
-}windmill_coords;
-
-void init(void)
-{
-    // define a cor de background da janela
-    //glClearColor(1.0, 1.0, 1.0, 1.0); //white
-
-    //glClearColor(1.0f, 0.45f, 0.2f, 1.0f); //sunset
-
-    glClearColor(0.68f, 0.85f, 0.9f, 1.0f); //morning
 
 
-  // define o sistema de visualização - tipo de projeção
-  glMatrixMode (GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho (-10, 10, -10, 10, -10, 10);
-  glMatrixMode(GL_MODELVIEW);
-}
-
+/*PRIMITVAS 
+Utilizadas para facilitar a construcao de estruturas mais complexas
+*/
 void square()
 {
 	  glBegin(GL_POLYGON);
@@ -79,31 +66,8 @@ void circle(double radius){
 }
 
 
-void sun(){
-    int i;
-    glColor3f(1,1,0);
-    
-    glPushMatrix();
-    glRotated(-frameNumber*0.7,0,0,1);
-    for(int i = 0; i < 13; i++){
-        glRotatef(360/13, 0, 0, 1);
-        glBegin(GL_LINES);
-        glVertex2f(0,0);
-        glVertex2f(0.75f,0);
-        glEnd();
-    }
-    glPopMatrix();
-    circle(0.5);
-    glColor3f(0,0,0);
-}
-void drawSun(){
-    glPushMatrix();
-    glTranslated(window_size*0.75/100, window_size*0.75/100, 0);
-    glScaled(2.5, 2.5, 1);
-    sun();
-    glPopMatrix();
-}
-
+/*BACKGROUNG
+Definicao das funcoes que desenham o cenario*/
 void icebergs(){
    glColor3f(0.90f, 0.95f, 0.98f);
     glPushMatrix();
@@ -149,7 +113,7 @@ void icebergs(){
 void drawIceSheet(){
     glColor3f(0.50f, 0.80f, 1.00f);
     glPushMatrix();
-        glTranslated(-window_size/200, -window_size/130, 0);
+        glTranslated(-max_height/200, -max_height/130, 0);
         glScaled(6, 3, 1);
         square();
     glPopMatrix();
@@ -158,15 +122,18 @@ void drawIceSheet(){
 void drawSea(){
     glColor3f(0.00f, 0.50f, 0.70f);
     glPushMatrix();
-        glTranslated(window_size/200, -window_size/130, 0);
+        glTranslated(max_height/200, -max_height/130, 0);
         glScaled(6, 3, 1);
         square();
     glPopMatrix();
 }
 
-void drawPenguim() {
+
+/*PERSONAGENS
+Definicao das funcoes que desenham os personagens*/
+void drawPenguim(bool isBaby) {
     glPushMatrix();
-        glTranslated(-3, -window_size/130 + 3, 0);
+        glTranslated(-3, -max_height/130 + 3, 0);
         glPushMatrix();
             glPushMatrix();
                 glColor3f(0.05f, 0.05f, 0.05f);
@@ -201,8 +168,12 @@ void drawPenguim() {
                 glTranslated(0.0, 3.3f, 0.0);
                 circle(1.0);
             glPopMatrix();
+            
+            /*Lógica aplicada para definir em qual direcao desenhar o rosto do penguim
+            Se front true, desenhar para a direita, senao, esquerda
+            */
 
-            if (!front) {
+            if ((!front) && (!isBaby)) {
                 glPushMatrix();
                     glPushMatrix();
                         glColor3f(1.00f, 1.00f, 1.00f);
@@ -238,24 +209,27 @@ void drawPenguim() {
     glPopMatrix();
 }
 
+//atualizacao do movimento do penguim a partir da global posicao_penguim
 void movePenguim(){
     //movement
     glPushMatrix();   
         glTranslated(posicao_penguim, 0, 0);     
-        drawPenguim();
+        drawPenguim(false);
     glPopMatrix();
 }
 
 void drawBaby(){
     glPushMatrix();
-        
-        glTranslated(-window_size/260 - 3, -window_size/260 + 3, 0);
+        glTranslated(-max_height/260 - 3, -max_height/260 + 3, 0);
         glScaled(0.8,0.8,1);
-        drawPenguim();
+        drawPenguim(true);
     glPopMatrix();
 
 }
 
+
+/*PEIXES
+Implementacao da lógica por tras dos peixes no mar*/
 void drawFishBody(double radiusX, double radiusY)
 {
   glBegin(GL_POLYGON);
@@ -266,20 +240,74 @@ void drawFishBody(double radiusX, double radiusY)
   glEnd();
 }
 
-void drawElipse(double radiusX, double radiusY)
-{
-  glBegin(GL_POLYGON);
-  for (int i = 0; i < 32; i++){
-    double ellipse_angle = (2 * M_PI / 32) * i;
-    glVertex3f(radiusX * cos(ellipse_angle), radiusY * sin(ellipse_angle), 0);
-  }
-  glEnd();
+
+void drawScenario(){
+    icebergs();
+    drawSea();
+    drawIceSheet();
 }
 
 
-void drawFish() {
+/*FISH SECTION*/
 
-  // desenha rabo
+const float SEA_LEFT   = 2.0f;
+const float SEA_RIGHT  =  10.0f;
+const float SEA_BOTTOM =  -10.0f;
+const float SEA_TOP    =   -4.5f; 
+
+// Número de peixes
+const int   NUM_FISHES = 6;
+
+// Estrutura de um peixe
+struct Fish {
+    float x, y;          
+    float speed;         
+    bool  isRight;       
+
+    Fish(): x(0), y(0), speed(0), isRight(true) {}
+};
+
+// Vetor global de peixes
+std::vector<Fish> fishes;
+
+// Inicializa vetor com os peixes
+void initializeFishes() {
+    fishes.clear();
+    srand((unsigned)time(nullptr));
+    for (int i = 0; i < NUM_FISHES; ++i) {
+        Fish f;
+
+        f.x = SEA_LEFT + static_cast<float>(rand()) / RAND_MAX * (SEA_RIGHT - SEA_LEFT);
+        f.y = SEA_BOTTOM + static_cast<float>(rand()) / RAND_MAX * (SEA_TOP - SEA_BOTTOM);
+
+        //Velocidade definida como 0.005 + 15% de um valor aleatorio normalizado
+        f.speed = 0.005f + static_cast<float>(rand()) / RAND_MAX * 0.15f;
+        f.isRight = (rand() % 2 == 0); //probabilidade de 50% de ser criado pra direita ou esquerda
+        fishes.push_back(f);
+    }
+}
+
+// Atualiza posição de cada peixe, invertendo direção ao bater na borda
+void updateFishes() {
+    for (auto &f : fishes) {
+        if (f.isRight) {
+            f.x += f.speed;
+            if (f.x > SEA_RIGHT) {
+                f.x = SEA_RIGHT;
+                f.isRight = false;
+            }
+        } else {
+            f.x -= f.speed;
+            if (f.x < SEA_LEFT) {
+                f.x = SEA_LEFT;
+                f.isRight = true;
+            }
+        }
+    }
+}
+
+void drawFish() {
+  // cauda
   glPushMatrix();
     glColor3f(0, 0, 0);
     glTranslatef(-2, 0, 1);
@@ -288,7 +316,7 @@ void drawFish() {
     triangle();
   glPopMatrix();
 
-  // desenha corpo
+  // corpo
   glPushMatrix();
     glColor3f(0, 0, 0);
     glScalef(1, 1, 1);
@@ -297,41 +325,44 @@ void drawFish() {
   glPopMatrix();
 }
 
-void drawScenario(){
-    //icebergs
-    icebergs();
-    //sea
-    drawSea();
-    //ice sheet
-    drawIceSheet();
+
+// Função de desenho dos peixes do array
+void drawFishes() {
+    for (const auto &f : fishes) {
+        glPushMatrix();
+          glTranslatef(f.x, f.y, 0.0f);
+          if (!f.isRight) {
+              glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
+          }
+          glScalef(0.5f, 0.5f, 1.0f);
+          drawFish(); 
+        glPopMatrix();
+    }
 }
-
-void drawFishModel() {
-  glPushMatrix();
-    glColor3f(0.8f, 0.4f, 0.0f);
-    glTranslatef(-1.5f * 0.5f, 0, 0.5f);
-    glRotatef(270, 0, 0, 1);
-    glScalef(1.0f * 0.5f, 0.5f * 0.5f, 1);
-    triangle();
-  glPopMatrix();
-
-  glPushMatrix();
-    glColor3f(0.8f, 0.4f, 0.0f);
-    glTranslatef(0, 0, 0.5f);
-    glScalef(1.0f * 0.5f, 1.0f * 0.5f, 1);
-    drawElipse(1, 0.5);
-  glPopMatrix();
-}
-
 
 /*TODO
 1. OK - Movimento do penguim na horizontal- usar carro
 2. OK - Filhote do Penguim
-3. Peixe
+3. OK - Peixe
 4. Passaro
-5. Dar movimento aleaorio pros peixes
+5. OK - Dar movimento aleaorio pros peixes
 6. Dar movimento de parabola pro passaro
 */ 
+
+void init(void)
+{
+    glClearColor(0.68f, 0.85f, 0.9f, 1.0f); //morning
+
+    // define o sistema de visualização - tipo de projeção
+    glMatrixMode (GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho (-10, 10, -10, 10, -10, 10);
+    glMatrixMode(GL_MODELVIEW);
+
+    initializeFishes();
+}
+
+
 void display() {
 
     // Limpa a janela, colocando na tela a cor definida pela função glClearColor
@@ -342,7 +373,7 @@ void display() {
 
     drawScenario();
     drawBaby();
-    drawFishModel();
+    drawFishes();
     movePenguim();
 
 
@@ -354,6 +385,7 @@ void display() {
 
 void doFrame(int v) {
     frameNumber++;
+     updateFishes();
     glutPostRedisplay();
     glutTimerFunc(30,doFrame,0);
 }
@@ -362,10 +394,10 @@ void keyboard(unsigned char key, int x, int y)
 {
     double dx = 0.5; // Step size for car movement
 
-    if(posicao_penguim == window_size/100){
-        posicao_penguim = -window_size/100;
-    }else if(posicao_penguim < -window_size/100){
-        posicao_penguim = -window_size/100;
+    if(posicao_penguim == max_height/100){
+        posicao_penguim = -max_height/100;
+    }else if(posicao_penguim < -max_height/100){
+        posicao_penguim = -max_height/100;
     }else{
         switch (key) {
             case 'a': case 'A': // Move backward
@@ -398,7 +430,7 @@ int main(int argc, char** argv)
    
    
   //Define o tamanho inicial da janela, 256x256 pixels, e a posição inicial do seu canto superior esquerdo na tela, (x, y)=(100, 100).
-  glutInitWindowSize (window_size, window_size);
+  glutInitWindowSize (max_height, max_height);
   glutInitWindowPosition (200, 200);
 
   // Cria uma janela e define seu título
