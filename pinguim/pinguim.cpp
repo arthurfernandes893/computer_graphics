@@ -38,7 +38,7 @@ struct mounts_coords{
 
 
 
-/*PRIMITVAS 
+/*===================PRIMITVAS=================== 
 Utilizadas para facilitar a construcao de estruturas mais complexas
 */
 void square()
@@ -69,7 +69,7 @@ void circle(double radius){
 }
 
 
-/*BACKGROUNG
+/*===================BACKGROUND===================
 Definicao das funcoes que desenham o cenario*/
 void icebergs(){
    glColor3f(0.90f, 0.95f, 0.98f);
@@ -138,7 +138,7 @@ void drawScenario(){
 }
 
 
-/*PERSONAGENS
+/*===================PERSONAGENS===================
 Definicao das funcoes que desenham os personagens*/
 void drawPenguim(bool isBaby) {
     glPushMatrix();
@@ -237,8 +237,7 @@ void drawBaby(){
 }
 
 
-/*FISH SECTION*/
-
+/*===================FISH SECTION===================*/
 const float SEA_LEFT   = 2.0f;
 const float SEA_RIGHT  =  10.0f;
 const float SEA_BOTTOM =  -10.0f;
@@ -339,7 +338,7 @@ void drawFishes() {
 }
 
 
-/*PASSARO
+/*===================PASSARO===================
 Implementação do pássaro*/
 
 void drawBird(){
@@ -363,25 +362,58 @@ void drawBird(){
    
 }
 
-void moveBird(){
-    double x,y;
+//movimento do passaro em formato de parabola com curvatura para cima
+void moveBird() {
+    static bool movingForward = true; // Direction of the bird's movement
+    double x, y;
+
     glPushMatrix();
-        x = BIRD_MOVEMENT;
-        y = ((x/2 - 4)*(x/2 - 4));
-        glTranslated(x,y,0);
-        drawBird();
+        if (movingForward) {
+            BIRD_MOVEMENT += 0.1; // Increment movement
+            x = BIRD_INIT_HORIZONTAL + BIRD_MOVEMENT;
+        } else {
+            BIRD_MOVEMENT -= 0.1; // Decrement movement
+            x = BIRD_INIT_HORIZONTAL + BIRD_MOVEMENT;
+        }
+
+        // Parabolic trajectory equation
+        y = BIRD_INIT_VERTICAL - ((x - BIRD_INIT_HORIZONTAL) * (x - BIRD_INIT_HORIZONTAL)) / 10;
+
+        // Ensure the bird stays within the defined limits
+        if (x > SEA_MAX_RIGHT) {
+            x = SEA_MAX_RIGHT;
+            movingForward = false;
+        } 
+        
+
+        // Check if the bird reaches the maximum height or the starting point
+        if (y <= -max_height / 100 && movingForward) {
+            movingForward = false; // Start moving backward
+        } else if (x <= BIRD_INIT_HORIZONTAL && !movingForward) {
+            movingForward = true; 
+            BIRD_MOVEMENT = 0; 
+          
+        }
+
+            glTranslated(x / 10 - 1, y / 10 - 1, 0);
+            drawBird();
+    
     glPopMatrix();
+
 }
 
 /*TODO
 1. OK - Movimento do penguim na horizontal- usar carro
 2. OK - Filhote do Penguim
 3. OK - Peixe
-4. Passaro
+4. OK - Passaro
 5. OK - Dar movimento aleaorio pros peixes
 6. Dar movimento de parabola pro passaro
+7. Inserir tempo de jogo
+8. Implementar logica de coleta dos peixess
 */ 
 
+/*===================OpenGL Functions===================*/
 void init(void)
 {
     glClearColor(0.68f, 0.85f, 0.9f, 1.0f); //morning
