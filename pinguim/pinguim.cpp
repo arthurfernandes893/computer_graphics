@@ -368,7 +368,7 @@ void moveBird(){
     glPushMatrix();
         x = BIRD_MOVEMENT;
         y = ((x/2 - 4)*(x/2 - 4));
-        glTranslated(-x,-y,0);
+        glTranslated(x,y,0);
         drawBird();
     glPopMatrix();
 }
