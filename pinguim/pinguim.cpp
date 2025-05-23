@@ -50,20 +50,10 @@ std::string formatTime(int totalSeconds) {
     int minutes = totalSeconds / 60;
     int seconds = totalSeconds % 60;
     char buffer[6];
+    sprintf(buffer, "%02d:%02d", minutes, seconds);
     return std::string(buffer);
 }
 
-void updateGameTime() {
-    static int lastFrame = 0;
-
-    // Check if a second has passed based on frame count
-    if (frameNumber - lastFrame >= 30) { // Assuming 30 FPS
-        if (gameTimeRemaining > 0) {
-            gameTimeRemaining--; // Decrease game time by 1 second
-        }
-        lastFrame = frameNumber; // Update the last frame count
-    }
-}
 /*===================PRIMITVAS=================== 
 Utilizadas para facilitar a construcao de estruturas mais complexas
 */
@@ -246,7 +236,6 @@ void drawPenguim(bool isBaby) {
 
 //atualizacao do movimento do penguim a partir da global posicao_penguim
 void movePenguim(){
-    //movement
     glPushMatrix();   
         glTranslated(posicao_penguim, 0, 0);     
         drawPenguim(false);
@@ -263,7 +252,7 @@ void drawBaby(){
 }
 
 
-/*===================FISH SECTION===================*/
+/*===================PEIXE SECTION===================*/
 const float SEA_LEFT   = 2.0f;
 const float SEA_RIGHT  =  10.0f;
 const float SEA_BOTTOM =  -10.0f;
@@ -390,37 +379,27 @@ void drawBird(){
 
 //movimento do passaro em formato de parabola com curvatura para cima
 void moveBird() {
-    static bool movingForward = true; // Direction of the bird's movement
+    static bool movingForward = true;
     double x, y;
 
     glPushMatrix();
         if (movingForward) {
-            BIRD_MOVEMENT += 0.1; // Increment movement
+            BIRD_MOVEMENT += 0.1; 
             x = BIRD_INIT_HORIZONTAL + BIRD_MOVEMENT;
         } else {
-            BIRD_MOVEMENT -= 0.1; // Decrement movement
+            BIRD_MOVEMENT -= 0.1; 
             x = BIRD_INIT_HORIZONTAL + BIRD_MOVEMENT;
         }
 
-        // Parabolic trajectory equation
-        y = BIRD_INIT_VERTICAL - ((x - BIRD_INIT_HORIZONTAL) * (x - BIRD_INIT_HORIZONTAL)) / 10;
+        //(x-h0)^2 / 10
+        y = - ((x - BIRD_INIT_HORIZONTAL) * (x / 10 - BIRD_INIT_HORIZONTAL)) / 10  ;
 
-        // Ensure the bird stays within the defined limits
+      
         if (x > SEA_MAX_RIGHT) {
             x = SEA_MAX_RIGHT;
             movingForward = false;
         } 
         
-
-        // Check if the bird reaches the maximum height or the starting point
-        if (y <= -max_height / 100 && movingForward) {
-            movingForward = false; // Start moving backward
-        } else if (x <= BIRD_INIT_HORIZONTAL && !movingForward) {
-            movingForward = true; 
-            BIRD_MOVEMENT = 0; 
-          
-        }
-
             glTranslated(x / 10 - 1, y / 10 - 1, 0);
             drawBird();
     
@@ -434,8 +413,8 @@ void moveBird() {
 3. OK - Peixe
 4. OK - Passaro
 5. OK - Dar movimento aleaorio pros peixes
-6. Dar movimento de parabola pro passaro
-7. Inserir tempo de jogo
+6. OK - Dar movimento de parabola pro passaro
+7. OK - Inserir tempo de jogo
 8. Implementar logica de coleta dos peixess
 */ 
 
@@ -485,7 +464,15 @@ void display() {
 
 void doFrame(int v) {
     frameNumber++;
-    BIRD_MOVEMENT++;
+    if(BIRD_MOVEMENT > 100){
+        BIRD_MOVEMENT = 0;
+    }else{
+        BIRD_MOVEMENT++;
+    }
+   
+    if(frameNumber % 33 ==0){
+        gameTimeRemaining--;
+    }
     updateFishes();
     glutPostRedisplay();
     glutTimerFunc(30,doFrame,0);
@@ -493,7 +480,7 @@ void doFrame(int v) {
 
 void keyboard(unsigned char key, int x, int y)
 {
-    double dx = 0.5; // Step size for car movement
+    double dx = 0.5;
 
     if(posicao_penguim == max_height/100){
         posicao_penguim = -max_height/100;
@@ -501,17 +488,17 @@ void keyboard(unsigned char key, int x, int y)
         posicao_penguim = -max_height/100;
     }else{
         switch (key) {
-            case 'a': case 'A': // Move backward
+            case 'a': case 'A': 
                 front = false;
                 posicao_penguim -= dx;
                 break;
-            case 'd': case 'D': // Move forward
+            case 'd': case 'D':
                 front = true;
                 posicao_penguim += dx;
                 break;
         }
     }
-    display(); // Request a redraw
+    display();
 }
 
 int main(int argc, char** argv)
