@@ -18,8 +18,98 @@ const float radius = 5.0f;
 
 
 
+void chair() {
+    // Define chair dimensions
+    float seatWidth = 0.8f;
+    float seatHeight = 0.1f;
+    float seatDepth = 0.8f;
+    float legHeight = 0.5f;
+    float legSide = 0.1f; // Thickness of the leg (assuming square legs)
+    float backrestWidth = seatWidth;
+    float backrestHeight = 0.7f;
+    float backrestThickness = 0.1f;
 
+    // Base of the chair is at (0,0,0) in its local coordinates
 
+    // Draw Seat
+    glPushMatrix();
+    // The seat is placed on top of the legs.
+    // Center of the seat: (0, legHeight + seatHeight/2, 0)
+    glTranslatef(0.0f, legHeight + seatHeight / 2.0f, 0.0f);
+    glScalef(seatWidth, seatHeight, seatDepth);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    // Draw Legs (4 legs)
+    float legOffsetW = seatWidth / 2.0f - legSide / 2.0f;
+    float legOffsetD = seatDepth / 2.0f - legSide / 2.0f;
+    float legCenterY = legHeight / 2.0f;
+
+    // Positions for the center of each leg's base
+    float legPositions[4][3] = {
+        { legOffsetW, legCenterY,  legOffsetD}, // Front-Right
+        {-legOffsetW, legCenterY,  legOffsetD}, // Front-Left
+        { legOffsetW, legCenterY, -legOffsetD}, // Back-Right
+        {-legOffsetW, legCenterY, -legOffsetD}  // Back-Left
+    };
+
+    for (int i = 0; i < 4; ++i) {
+        glPushMatrix();
+        glTranslatef(legPositions[i][0], legPositions[i][1], legPositions[i][2]);
+        glScalef(legSide, legHeight, legSide);
+        glutSolidCube(1.0f);
+        glPopMatrix();
+    }
+
+    // Draw Backrest
+    // The backrest sits on the back edge of the seat.
+    // Center Y of backrest: top of seat (legHeight + seatHeight) + backrestHeight/2
+    // Center Z of backrest: back edge of seat (-seatDepth/2) - backrestThickness/2
+    float backrestCenterY = (legHeight + seatHeight) + backrestHeight / 2.0f;
+    float backrestCenterZ = -seatDepth / 2.0f - backrestThickness / 2.0f;
+
+    glPushMatrix();
+    glTranslatef(0.0f, backrestCenterY, backrestCenterZ);
+    glScalef(backrestWidth, backrestHeight, backrestThickness);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+}
+
+void position_chair(){
+   float x = 0.7, z = 0.9;
+
+  for (int i = -1; i <=1; i+=2){
+    for(int j = -1; j <= 1; j+=2){
+      glPushMatrix();
+        glTranslatef(i * x, 0, j * z);
+        j > 0 ? glRotated(180,0,1,0): glRotated(0,0,0,1);
+        chair();
+      glPopMatrix();
+    }
+  }
+
+}
+
+void table(){
+  glPushMatrix();
+        glTranslatef(0.0, 0.8, 0.0);
+        glScalef(3.0, 0.1, 2.0);
+        glutSolidCube(1.0);
+  glPopMatrix();
+    
+    float legHeight = 0.8;
+    float x = 1.3, z = 0.9;
+
+    for (int i = -1; i <= 1; i += 2) {
+        for (int j = -1; j <= 1; j += 2) {
+            glPushMatrix();
+                glTranslatef(i * x, legHeight / 2, j * z); 
+                glScalef(0.15, legHeight, 0.15);
+                glutSolidCube(1.0);
+            glPopMatrix();
+        }
+    }
+}
 // Clears the window and depth buffer and draws three solids.
 //
 // The solids are placed so that they either sit or float above the x-z plane;
@@ -43,25 +133,11 @@ void display() {
             0.0, 1.0, 0.0,     // Look at center of cube
             0.0, 1.0, 0.0);    // Up direction
 
-     
-    glPushMatrix();
-        glTranslatef(0.0, 1.0, 0.0);
-        glScalef(3.0, 0.2, 2.0);
-        glutSolidCube(1.0);
-    glPopMatrix();
     
-    float legHeight = 1.0;
-    float x = 1.3, z = 0.9;
-
-    for (int i = -1; i <= 1; i += 2) {
-        for (int j = -1; j <= 1; j += 2) {
-            glPushMatrix();
-                glTranslatef(i * x, legHeight / 2, j * z); 
-                glScalef(0.2, legHeight, 0.2);
-                glutSolidCube(1.0);
-            glPopMatrix();
-        }
-    }
+    
+    position_chair();
+    table();
+  
 
 
     glFlush();
