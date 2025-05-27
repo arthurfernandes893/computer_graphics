@@ -90,6 +90,12 @@ void position_chair(){
 
 }
 
+void plate(){}
+
+void towel(){}
+
+void cup(){}
+
 void table(){
   glPushMatrix();
         glTranslatef(0.0, 0.8, 0.0);
