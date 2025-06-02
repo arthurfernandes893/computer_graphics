@@ -182,13 +182,13 @@ void display() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();  // Reset matrix before gluLookAt
 
-    //gluLookAt(camX, 2.0, camZ,   // Camera position (1.0 height)
-    //        0.0, 1.0, 0.0,     // Look at center of cube
-    //        0.0, 1.0, 0.0);    // Up direction
+    gluLookAt(camX, 2.0, camZ,   // Camera position (1.0 height)
+            0.0, 1.0, 0.0,     // Look at center of cube
+            0.0, 1.0, 0.0);    // Up direction
 
-    gluLookAt(-3.0, 2.5, 3.0,
-        0.0, 1.0, 0.0,    
-        0.0, 1.0, 0.0);   
+    //gluLookAt(-3.0, 2.5, 3.0,
+    //    0.0, 1.0, 0.0,    
+    //    0.0, 1.0, 0.0);   
 
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, green);
     position_chair();
@@ -280,7 +280,7 @@ int main(int argc, char** argv) {
   glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
   glutInitWindowPosition(80, 80);
   glutInitWindowSize(800, 600);
-  glutCreateWindow("Cyan Shapes in Yellow Light");
+  glutCreateWindow("Mesa Posta de Jantar");
   glutReshapeFunc(reshape);
   glutDisplayFunc(display);
 
