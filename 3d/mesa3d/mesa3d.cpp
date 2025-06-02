@@ -90,9 +90,50 @@ void position_chair(){
 
 }
 
-void plate(){}
+void towel(){
+  glPushMatrix();
+        glTranslatef(0.0, 0.85, 0.0);
+        glScalef(0.8, 0.04, 0.7);
+        glutSolidCube(1.0);
+  glPopMatrix();
+}
 
-void towel(){}
+void position_towel(){
+  float x = 0.7, z = 0.65;
+
+  for (int i = -1; i <=1; i+=2){
+    for(int j = -1; j <= 1; j+=2){
+      glPushMatrix();
+        glTranslatef(i * x, 0, j * z);
+        towel();
+      glPopMatrix();
+    }
+  }
+
+}
+
+void plate(){
+    glPushMatrix();
+       glTranslatef(0.0, 0.9, 0.0);
+      glRotated(90,1,0,0);
+      glScalef(0.5, 0.5, 0.09);
+      glutSolidTorus(0.175, 0.25, 16, 40);
+    glPopMatrix();
+}
+
+void position_plates(){
+  float x = 0.7, z = 0.65;
+
+  for (int i = -1; i <=1; i+=2){
+    for(int j = -1; j <= 1; j+=2){
+      glPushMatrix();
+        glTranslatef(i * x, 0, j * z);
+        plate();
+      glPopMatrix();
+    }
+  }
+
+}
 
 void cup(){}
 
@@ -126,6 +167,12 @@ void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
+      
+    GLfloat green[] = { 0.0, 1.0, 0.0, 1.0 };
+    GLfloat red[] = { 1.0, 0.0, 0.0, 1.0 };
+    GLfloat brown[] = { 0.6, 0.3, 0.1, 1.0 };
+    GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
+
     glMatrixMode(GL_MODELVIEW);
 
     float radians = cameraAngle * 3.14159f / 180.0f;
@@ -135,14 +182,27 @@ void display() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();  // Reset matrix before gluLookAt
 
-    gluLookAt(camX, 1.0, camZ,   // Camera position (1.0 height)
-            0.0, 1.0, 0.0,     // Look at center of cube
-            0.0, 1.0, 0.0);    // Up direction
+    //gluLookAt(camX, 2.0, camZ,   // Camera position (1.0 height)
+    //        0.0, 1.0, 0.0,     // Look at center of cube
+    //        0.0, 1.0, 0.0);    // Up direction
 
-    
-    
+    gluLookAt(-3.0, 2.5, 3.0,
+        0.0, 1.0, 0.0,    
+        0.0, 1.0, 0.0);   
+
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, green);
     position_chair();
+
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, brown);
     table();
+
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, red);
+    position_towel();
+
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, white);
+    position_plates();
+
+
   
 
 
@@ -185,27 +245,6 @@ void reshape(GLint w, GLint h) {
 // to make cyan colored objects with a fairly low shininess value.  Lighting
 // and depth buffer hidden surface removal are enabled here.
 void init() {
-
-  GLfloat black[] = { 0.0, 0.0, 0.0, 1.0 };
-  GLfloat yellow[] = { 1.0, 1.0, 0.0, 1.0 };
-  GLfloat cyan[] = { 0.0, 1.0, 1.0, 1.0 };
-  GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
-  GLfloat direction[] = { 0.0, -10.0, 0.0, 1.0 };
-  GLfloat direction1[] = { 0.0, 10.0, 0.0, 1.0 };
-
-  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cyan);
-  glMaterialfv(GL_FRONT, GL_SPECULAR, white);
-  glMaterialf(GL_FRONT, GL_SHININESS, 30);
-
-  glLightfv(GL_LIGHT0, GL_AMBIENT, black);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, yellow);
-  glLightfv(GL_LIGHT0, GL_SPECULAR, white);
-  glLightfv(GL_LIGHT0, GL_POSITION, direction);
-
-  glLightfv(GL_LIGHT1, GL_AMBIENT, black);
-  glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
-  glLightfv(GL_LIGHT1, GL_SPECULAR, white);
-  glLightfv(GL_LIGHT1, GL_POSITION, direction1);
 
   glEnable(GL_LIGHTING);                // so the renderer considers light
   glEnable(GL_LIGHT0);                  // turn LIGHT0 on
