@@ -273,6 +273,8 @@ void reshape(GLint w, GLint h) {
 // and depth buffer hidden surface removal are enabled here.
 void init() {
 
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_NORMALIZE);
 
   glEnable(GL_LIGHTING);                // so the renderer considers light
