@@ -12,6 +12,7 @@
 
 #include <math.h>
 #include <iostream>
+#include "../materiais.hpp"
 
 float cameraAngle = 0.0f; // In degrees
 const float radius = 5.0f;
@@ -90,6 +91,14 @@ void position_chair(){
 
 }
 
+void drawChairs(){
+  glPushMatrix();
+    int material = 7;
+    materialColors(material);
+    position_chair();
+  glPopMatrix();
+}
+
 void towel(){
   glPushMatrix();
         glTranslatef(0.0, 0.85, 0.0);
@@ -110,6 +119,14 @@ void position_towel(){
     }
   }
 
+}
+
+void drawTowels(){
+  glPushMatrix();
+    int material = 11;
+    materialColors(material);
+    position_towel();
+  glPopMatrix();
 }
 
 void plate(){
@@ -135,6 +152,15 @@ void position_plates(){
 
 }
 
+void drawPlates(){
+    glPushMatrix();
+    int material = 6;
+    materialColors(material);
+    position_plates();
+  glPopMatrix();
+
+}
+
 void cup(){}
 
 void table(){
@@ -156,6 +182,15 @@ void table(){
             glPopMatrix();
         }
     }
+}
+
+void drawTable(){
+
+  glPushMatrix();
+    int material = 0;
+    materialColors(material);
+    table();
+  glPopMatrix();
 }
 // Clears the window and depth buffer and draws three solids.
 //
@@ -182,29 +217,21 @@ void display() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();  // Reset matrix before gluLookAt
 
-    gluLookAt(camX, 2.0, camZ,   // Camera position (1.0 height)
-            0.0, 1.0, 0.0,     // Look at center of cube
-            0.0, 1.0, 0.0);    // Up direction
+    //gluLookAt(camX, 2.0, camZ,   // Camera position (1.0 height)
+    //        0.0, 1.0, 0.0,     // Look at center of cube
+    //        0.0, 1.0, 0.0);    // Up direction
 
-    //gluLookAt(-3.0, 2.5, 3.0,
-    //    0.0, 1.0, 0.0,    
-    //    0.0, 1.0, 0.0);   
+    gluLookAt(-3.0, 2.5, 3.0,
+        0.0, 1.0, 0.0,    
+        0.0, 1.0, 0.0);   
 
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, green);
-    position_chair();
-
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, brown);
-    table();
-
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, red);
-    position_towel();
-
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, white);
-    position_plates();
-
-
-  
-
+    
+    //onde a luz esta, qual tipo de luz,  sua cor
+    //glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, brown);
+    drawChairs();
+    drawTable();
+    drawTowels();
+    drawPlates();
 
     glFlush();
     glutSwapBuffers();
@@ -246,9 +273,14 @@ void reshape(GLint w, GLint h) {
 // and depth buffer hidden surface removal are enabled here.
 void init() {
 
+  glEnable(GL_NORMALIZE);
+
   glEnable(GL_LIGHTING);                // so the renderer considers light
   glEnable(GL_LIGHT0);                  // turn LIGHT0 on
   glEnable(GL_LIGHT1);
+  //glEnable(GL_LIGHT2);  
+  //glEnable(GL_LIGHT3);  
+  //glEnable(GL_LIGHT4);  
   glEnable(GL_DEPTH_TEST);              // so the renderer considers depth
 
 }
