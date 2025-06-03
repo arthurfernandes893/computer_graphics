@@ -93,7 +93,7 @@ void position_chair(){
 
 void drawChairs(){
   glPushMatrix();
-    int material = 7;
+    int material = 15;
     materialColors(material);
     position_chair();
   glPopMatrix();
