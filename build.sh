@@ -8,7 +8,7 @@ os_name=$(uname)
 
 if [ "$os_name" == "Darwin" ]; then
     # Compilação para macOS
-    g++ "$nome/$nome.cpp" -framework OpenGL -framework GLUT -o "$nome/$nome.vis" -lm
+    g++ "$nome/$nome.cpp" -std=c++11 -framework OpenGL -framework GLUT -o "$nome/$nome.vis" -lm
     echo "Compilado para macOS: $nome/$nome.vis"
 elif [ "$os_name" == "Linux" ]; then
     # Compilação para Linux
