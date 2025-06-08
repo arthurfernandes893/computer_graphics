@@ -3,8 +3,8 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include "bezier.hpp"
 
-// Para macOS, use <GLUT/glut.h>. Para Linux/Windows, use <GL/glut.h>.
 #ifdef __APPLE_CC__
 #include <GLUT/glut.h>
 #else
@@ -210,18 +210,13 @@ void display()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+    gluLookAt(0,20,6,0,0,0,0,0,1);
+
     // Configura a câmera
     // Translada o centro da cena para a origem e afasta
     glTranslatef(-NI / 2.0f, -NJ / 2.0f, -20.0f);
     
-    // Rotaciona a cena com base na interação do mouse
-    glRotatef(rotateX, 1.0f, 0.0f, 0.0f);
-    glRotatef(rotateY, 0.0f, 1.0f, 0.0f);
 
-    // Define as cores
-    GLfloat red[] = {0.9f, 0.1f, 0.1f, 1.0f};
-    GLfloat green[] = {0.1f, 0.9f, 0.1f, 1.0f};
-    GLfloat blue[] = {0.1f, 0.1f, 0.9f, 1.0f};
 
     // --- Desenha as três superfícies com deslocamentos ---
 

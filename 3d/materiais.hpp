@@ -1,6 +1,8 @@
 #ifndef edu_jmu_cs_Materials_h
 #define edu_jmu_cs_Materials_h
 
+
+
 int BRASS = 0;
 int BRONZE = 1;
 int CHROME = 2;
