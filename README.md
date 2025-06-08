@@ -5,7 +5,7 @@ The purpose of the following activities is to develop a solid knowledge on the c
 The `build.sh` is the script for running the activites. To do so, the variable `name` should be changed to the directory of the activity.
 
 ```bash
-user@pc:~/computer_graphics$ ./build.sh
+$ ./build.sh
 Compilado para Linux: foguete.vis
 Running...
 ```
