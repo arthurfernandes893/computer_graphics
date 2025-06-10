@@ -10,8 +10,8 @@ struct XYZ
     #define NI 18
     #define NJ 6
     XYZ inp[NI+1][NJ+1];
-    #define RESOLUTIONI 6*NI
-    #define RESOLUTIONJ 6*NJ
+    #define RESOLUTIONI 3*NI
+    #define RESOLUTIONJ 3*NJ
     XYZ outp[RESOLUTIONI][RESOLUTIONJ];
 #endif
 
@@ -119,6 +119,42 @@ void drawSurface() {
       }
    }
 }
+
+void display(){
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    //gluLookAt(20, 10, 40,   // câmera mais afastada
+    //          20,  3,  0,   // ponto de interesse central
+    //           0,  1,  0);  // vetor "up"
+
+   gluLookAt(30.0, 50.0, 50.0,
+        0.0, 0.0, 0.0,    
+        0.0, 1.0, 0.0);   
+
+    int nRows = 3;
+    int nCols = 1;
+    float spacingX = 10.0;
+    float spacingY = 10.0;
+
+    for (int i = 0; i < nCols; i++) {
+        for (int j = 0; j < nRows; j++) {
+            glPushMatrix();
+            glTranslatef(i * spacingX, 0, j * spacingY);
+            generateControlPoint();
+            Surface();
+            drawSurface();
+            glPopMatrix();
+        }
+    }
+
+    glutSwapBuffers();
+}
+
+
+/*
 void display(){
 
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -142,7 +178,7 @@ void display(){
    glFlush();
    glutSwapBuffers();
 
-}
+}*/
 
 void doFrame(int v) {
     frameNum++;
@@ -185,7 +221,7 @@ void init(){
    glEnable(GL_LIGHT2);
     glEnable(GL_DEPTH_TEST);    
 
-    glClearColor(1.0, 1.0, 1.0, 1.0); // fundo branco
+    glClearColor(0.0, 0.0, 0.0, 0.0); 
 }
 
 
