@@ -10,8 +10,8 @@ struct XYZ
     #define NI 18
     #define NJ 6
     XYZ inp[NI+1][NJ+1];
-    #define RESOLUTIONI 3*NI
-    #define RESOLUTIONJ 3*NJ
+    #define RESOLUTIONI 6*NI
+    #define RESOLUTIONJ 6*NJ
     XYZ outp[RESOLUTIONI][RESOLUTIONJ];
 #endif
 
@@ -120,16 +120,34 @@ void drawSurface() {
    }
 }
 void display(){
-    generateControlPoint();
-    Surface();
-    drawSurface();
+
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   
+    GLfloat green[] = { 0.0, 1.0, 0.0, 1.0 };
+    GLfloat red[] = { 1.0, 0.0, 0.0, 1.0 };
+    GLfloat brown[] = { 0.6, 0.3, 0.1, 1.0 };
+    GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();  // Reset matrix before gluLookAt
+
+    gluLookAt(30.0, 70.0, 30.0,
+        0.0, 0.0, 0.0,    
+        0.0, 1.0, 0.0);   
+
+   generateControlPoint();
+   Surface();
+   drawSurface();
+
+   glFlush();
+   glutSwapBuffers();
 
 }
 
 void doFrame(int v) {
     frameNum++;
     glutPostRedisplay();
-    glutTimerFunc(30,doFrame,0);
+    glutTimerFunc(100,doFrame,0);
 }
 
 // Função de redimensionamento da janela (Reshape Callback)
@@ -152,6 +170,26 @@ void reshape(int w, int h)
 }
 
 void init(){
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_NORMALIZE);
+
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHT1);
+   GLfloat blue_light[] = { 0.0, 0.0, 1.0, 1.0 };
+   GLfloat light_position[] = { 10.0, 10.0, 10.0, 1.0 };
+
+   glLightfv(GL_LIGHT2, GL_DIFFUSE, blue_light);
+   glLightfv(GL_LIGHT2, GL_POSITION, light_position);
+   glEnable(GL_LIGHT2);
+    glEnable(GL_DEPTH_TEST);    
+
+    glClearColor(1.0, 1.0, 1.0, 1.0); // fundo branco
+}
+
+
+/*void init(){
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -164,7 +202,7 @@ void init(){
     //glEnable(GL_LIGHT3);  
     //glEnable(GL_LIGHT4);  
     glEnable(GL_DEPTH_TEST);    
-}
+}*/
 
 // Função Principal
 int main(int argc, char **argv)
