@@ -1,0 +1,8 @@
+Agora vamos estudar algumas funções chamadas nos códigos apresentados acima. Primeiro,
+vamos considerar a função glShadeModel(), que é usada para especificar a técnica de tonalização
+desejada. Experimente trocar o parâmetro GL_SMOOTH por GL_FLAT e responda a questão 1.
+
+Questão 1 -  O que aconteceu quando você trocou o parâmetro passado para a
+funçãoglShadeModel? Explique com as suas palavras para que serve esta função.
+
+
